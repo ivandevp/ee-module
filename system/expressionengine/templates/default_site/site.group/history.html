@@ -1,0 +1,20 @@
+<h4>History</h4>
+<table>
+    <thead>
+        <tr>
+            <th>Bidder</th>
+            <th>Amount</th>
+            <th>When</th>
+        </tr>
+    </thead>
+    <tbody>
+		{exp:auction:history entry_id="{segment_3}"}
+			{if no_results}<tr><td colspan="3">No bids yet</td></tr>{/if}
+			<tr {if count==1}class="highlighted"{/if}>
+				<td>{screen_name}</td>
+				<td>&pound;{bid_amount}</td>
+				<td>{bid_date format="%D, %M %j, %Y"}</td>
+			</tr>
+		{/exp:auction:history}
+    </tbody>
+</table> 

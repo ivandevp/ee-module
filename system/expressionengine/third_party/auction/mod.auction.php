@@ -23,7 +23,7 @@ class Auction {
 	public function summary()
 	{
 		$tagdata = $this->EE->TMPL->tagdata;
-		
+
 		// Find the entry_id of the auction to display
 		$entry_id = $this->EE->TMPL->fetch_param('entry_id');
 		if ($entry_id === "" || $entry_id === FALSE) {
@@ -113,6 +113,50 @@ class Auction {
 		);
 
 		return $this->EE->output->show_message($data);
+	}
+
+	public function history() {
+		// Find the url title of the auction to add the form for
+		$url_title = $this->EE->TMPL->fetch_param('url_title');
+
+		// Find the entry id of the auction to add the form for
+		$entry_id = $this->EE->TMPL->fetch_param('entry_id');
+
+		if (($url_title === "" || $url_title === FALSE) && ($entry_id === "" || $entry_id === FALSE)) {
+			return "";
+		}
+
+		// Find the list of bids for this auction
+		$this->EE->db->select("exp_auction.bid_amount,
+			exp_auction.bid_date,
+			exp_members.member_id,
+			exp_members.screen_name,
+			exp_members.username,
+			exp_members.email");
+		$this->EE->db->from("auction");
+		$this->EE->db->join("exp_members", "exp_members.member_id = exp_auction.member_id");
+		if ($entry_id !== FALSE || $entry_id !== "") {
+			// We have the entry_id, so we don't need exp_channel_titles table
+			$this->EE->db->where("auction.entry_id", $entry_id);
+		} else {
+			// We have the url_title, so we need exp_channel_titles table to find the entry_id
+			$this->EE->db->join("exp_channel_titles", "exp_channel_titles.entry_id = auction.entry_id");
+			$this->EE->db->where("exp_channel_titles.url_title", $url_title);
+		}
+
+		$this->EE->db->order_by("bid_date DESC");
+		$query = $this->EE->db->get();
+
+		// IF no results are found
+		if ($query->num_rows() == 0) {
+			// Return the {if no_results}...{/if} conditional
+			return $this->EE->db->no_results;
+		}
+
+		// Put history data in an array and return the parsed the tag data
+		$data = $query->result_array();
+		$tagdata = $this->EE->TMPL->tagdata;
+		return $this->EE->TMPL->parse_variables($tagdata, $data);
 	}
 
 }
