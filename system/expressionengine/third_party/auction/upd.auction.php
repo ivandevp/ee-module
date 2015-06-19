@@ -68,6 +68,13 @@ class Auction_upd {
 		$this->EE->dbforge->add_key('id', TRUE);
 		$this->EE->dbforge->create_table('auction');
 
+		$data = array(
+			'class' => 'Auction',
+			'method' => 'place_bid'
+		);
+
+		$this->EE->db->insert('actions', $data);
+
 		return TRUE;
 	}
 
@@ -92,6 +99,9 @@ class Auction_upd {
 
 		$this->EE->db->where('class', $this->module_name . '_mcp');
 		$this->EE->db->delete('actions');
+
+		$this->EE->load->dbforge();
+		$this->EE->dbforge->drop_table('auction');
 
 		return TRUE;
 	}

@@ -1,0 +1,14 @@
+{exp:channel:entries channel="auction"}
+	<h3>{title}</h3>
+    <img src="{auction_image}" width="100" height="100"/>
+    {auction_description}
+	{exp:auction:form entry_id="{entry_id}"}
+		<p>
+			&pound; <input type="text" name="bid_amount" value="0.00" size="5" />
+			<input type="submit" name="submit" value="Place a bid!" />
+		</p>
+	{/exp:auction:form}
+	{exp:auction:summary entry_id="{entry_id}"}
+		<p>Current bid: &pound;{current_bid} ({total_bids} bids)</p>
+	{/exp:auction:summary}
+{/exp:channel:entries}
